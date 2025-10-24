@@ -58,10 +58,10 @@ def upload_file():
         parser = BillParser(text)
         data = parser.extract_all()
 
-        # save to excel
-        df = pd.DataFrame([data])
-        # df.to_excel("output.xlsx", index=False)
-        save_to_excel(data, filename="output.xlsx")
+        # # save to excel
+        # df = pd.DataFrame([data])
+        # # df.to_excel("output.xlsx", index=False)
+        # save_to_excel(data, filename="output.xlsx")
 
         return jsonify ({
             "status" : "success",
