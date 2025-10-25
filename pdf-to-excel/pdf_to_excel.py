@@ -30,4 +30,4 @@ def pdf_to_excel(pdf_file_path, excel_file_path=None):
     print(f"✅ extracted {len(tables)} table(s) and saved to {excel_file_path}")
 
 # example usage
-pdf_to_excel('/Users/muhammadputraazam/Desktop/uni/S5/workshop_2/Workshop-2-Group-12-2025/pytesseract-test/ocr-receipt-test/receipt-ticket-examples/pdf/ItemizedReceipt.pdf')
+pdf_to_excel('path/to/pdf_file')
