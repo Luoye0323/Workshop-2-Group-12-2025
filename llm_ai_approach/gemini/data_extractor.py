@@ -13,7 +13,7 @@ from PIL import Image
 
 
 # === 0. setup gemini ===
-os.environ["GEMINI_API_KEY"] = "AIzaSyCUN3KvVvx57LtX27awuK_jdCmVPtTtP4w"
+os.environ["GEMINI_API_KEY"] = "your-api-key-here"
 client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
 
 # === 1. detect and crop table region ===
