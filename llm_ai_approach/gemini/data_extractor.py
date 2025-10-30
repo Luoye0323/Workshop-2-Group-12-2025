@@ -54,7 +54,7 @@ def detect_table_regions(image_path):
 
 
 # === 2. load & preprocess ===
-image_path = "/Users/muhammadputraazam/Desktop/uni/S5/workshop2/Workshop-2-Group-12-2025/llm_ai_approach/gemini/MLK PMT 10103 - V-003.png"
+image_path = "path/to/your/sample/image"
 cropped_path = detect_table_regions(image_path)
 
 with Image.open(cropped_path) as image:
