@@ -1,6 +1,4 @@
 #This script currently accept jpg file as input.
-!pip install google-genai
-
 import os
 from google import genai
 from google.genai import types
