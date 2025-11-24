@@ -413,7 +413,7 @@ def process_bulk_files(input_path, output_folder="output"):
 # === MAIN EXECUTION ===
 if __name__ == "__main__":
     # OPTION 1: Process single file
-    single_file = "MLK PMT 10108 - H-002.pdf"  # replace with the file path here 
+    single_file = "MLK PMT 10109 - H-003.pdf"  # replace with the file path here 
     process_single_file(single_file, f"output_openai_{Path(single_file).stem}.xlsx")
     
     # OPTION 2: Process entire folder (bulk)

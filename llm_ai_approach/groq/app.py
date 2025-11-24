@@ -413,7 +413,7 @@ def process_bulk_files(input_path, output_folder="output"):
 # === MAIN EXECUTION ===
 if __name__ == "__main__":
     # OPTION 1: Process single file
-    single_file = "MLK PMT 10108 - H-002.pdf"  # Replace with your file path
+    single_file = "MLK PMT 10110 - H-004.pdf"  # Replace with your file path
     process_single_file(single_file, f"output_groq_{Path(single_file).stem}.xlsx")
     
     # OPTION 2: Process entire folder (bulk)
