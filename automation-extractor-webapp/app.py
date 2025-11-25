@@ -1,23 +1,25 @@
 # app.py - Flask Web Application for Table Extraction
 
-from flask import Flask, render_template, request, send_file, jsonify, session
-from werkzeug.utils import secure_filename
-import os
-import uuid
 import io
-import time
-import pandas as pd
 import json as js
-import xlsxwriter
-from google import genai
-from google.genai import types, errors as genai_errors
-from PIL import Image
-from pdf2image import convert_from_path
-from pathlib import Path
+import os
 import re
+import time
+import uuid
+from pathlib import Path
+
+import pandas as pd
+import xlsxwriter
+from flask import Flask, jsonify, render_template, request, send_file, session
+from google import genai
+from google.genai import errors as genai_errors
+from google.genai import types
+from pdf2image import convert_from_path
+from PIL import Image
 from pptx import Presentation
-from pptx.util import Inches, Pt
 from pptx.enum.text import PP_ALIGN
+from pptx.util import Inches, Pt
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key-here'
