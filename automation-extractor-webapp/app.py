@@ -38,9 +38,6 @@ client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
-
-# === Your existing functions (adapted) ===
-
 def safe_generate(client, model, contents, max_retries=3, delay=5):
     for attempt in range(1, max_retries + 1):
         try:
