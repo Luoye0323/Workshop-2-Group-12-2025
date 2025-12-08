@@ -4,9 +4,56 @@ from google import genai
 from google.genai import types
 import re
 import json
+import fitz  # PyMuPDF
+from PIL import Image
+import io
 
 input_folder = "/content/output_images"
 image_files = sorted([f for f in os.listdir(input_folder) if f.lower().endswith(".jpg")])
+
+def split_pdf_to_img():
+  pdf_path = "/content/MLK PMT 10103 - V-003.pdf"
+  output_folder = "/content/output_images"
+
+  os.makedirs(output_folder, exist_ok=True)
+
+  doc = fitz.open(pdf_path)
+
+  for page_num in range(len(doc)):
+      page = doc[page_num]
+
+      # Step 1: Render PDF page to pixmap
+      pix = page.get_pixmap(dpi=300)
+
+      # Step 2: Convert pixmap → PIL image (in memory)
+      img_bytes = pix.tobytes("png")   # or "ppm"
+      img = Image.open(io.BytesIO(img_bytes))
+
+      w, h = img.size
+
+      overlap_percent = 0.02  # 10% overlap
+      overlap_w = int(w * overlap_percent)  # horizontal overlap
+      overlap_h = int(h * overlap_percent)  # vertical overlap
+
+      # Step 3: 4 crop regions
+      crops = [
+          (0, 0, w//2 + overlap_w, h//2 + overlap_h),                  # top-left
+          (w//2 - overlap_w, 0, w, h//2 + overlap_h),                  # top-right
+          (0, h//2 - overlap_h, w//2 + overlap_w, h),                  # bottom-left
+          (w//2 - overlap_w, h//2 - overlap_h, w, h)                   # bottom-right
+      ]
+
+      # Step 4: Crop + compress into JPEG
+      for i, box in enumerate(crops):
+          cropped = img.crop(box)
+          output_path = f"{output_folder}/page_{page_num+1}_part_{i+1}.jpg"
+
+          # JPEG compression (quality 30–80 recommended)
+          cropped.save(output_path, "JPEG", quality=50)
+
+          print("Saved:", output_path)
+
+  doc.close()
 
 def detect_tables(input_image_path):
 
@@ -103,6 +150,7 @@ def crop_table(tables_data, image_path, counter):
 # === Process all images ===
 results = {}
 counter =0
+split_pdf_to_img()
 for idx, filename in enumerate(image_files, start=1):
     full_path = os.path.join(input_folder, filename)
     print(f"\n🔍 Processing Image {idx}: {filename}")
