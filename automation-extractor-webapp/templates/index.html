@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Table Extractor - AI Powered</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      .drag-active {
+        border-color: #3b82f6 !important;
+        background-color: #eff6ff !important;
+      }
+      .spinner {
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: #fff;
+        animation: spin 1s ease-in-out infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+    <!-- <script>
+      fetch("navbar.html")
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById("navbar").innerHTML = data;
+        })
+        .catch (error => console.error ("Error loading navbar: ", error));
+    </script> -->
+  </head>
+  <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <div id="navbar"></div>
+    <div class="container mx-auto px-4 py-8 max-w-5xl">
+      <!-- Header -->
+      <div class="text-center mb-8">
+        <h1 class="text-4xl font-bold text-gray-800 mb-2">
+           IPETRO | GA Drawing Extractor
+        </h1>
+        <p class="text-gray-600">
+          Upload PDFs or images to extract tables into Excel and PowerPoint
+        </p>
+      </div>
+
+      <!-- Upload Area -->
+      <div class="bg-white rounded-lg shadow-lg p-8 mb-6">
+        <div
+          id="dropZone"
+          class="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center transition-all hover:border-blue-400"
+        >
+          <svg
+            class="w-16 h-16 mx-auto mb-4 text-gray-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+            ></path>
+          </svg>
+          <p class="text-xl font-semibold text-gray-700 mb-2">
+            Drag and drop files here
+          </p>
+          <p class="text-gray-500 mb-4">or click to browse</p>
+          <input
+            type="file"
+            id="fileInput"
+            multiple
+            accept=".pdf,.jpg,.jpeg,.png"
+            class="hidden"
+          />
+          <button
+            onclick="document.getElementById('fileInput').click()"
+            class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Select Files
+          </button>
+          <p class="text-sm text-gray-400 mt-3">
+            Supported: PDF, JPG, JPEG, PNG (Max 50MB)
+          </p>
+        </div>
+
+        <!-- File List -->
+        <div id="fileList" class="mt-6 hidden">
+          <h3 class="font-semibold text-gray-700 mb-3">
+            Selected Files (<span id="fileCount">0</span>)
+          </h3>
+          <div id="filesContainer" class="space-y-2 mb-4"></div>
+          <button
+            id="processBtn"
+            onclick="processFiles()"
+            class="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+              ></path>
+            </svg>
+            <span>Extract Tables</span>
+          </button>
+        </div>
+
+        <!-- Processing Status -->
+        <div id="processingStatus" class="mt-6 hidden">
+          <div class="flex items-center justify-center space-x-3 text-blue-600">
+            <div class="spinner w-6 h-6"></div>
+            <span class="font-semibold">Processing files...</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results -->
+      <div id="results" class="bg-white rounded-lg shadow-lg p-8 hidden">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">
+          Extraction Results
+        </h2>
+        <div id="resultsContainer" class="space-y-4"></div>
+      </div>
+
+      <!-- Info Box -->
+      <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div class="flex items-start space-x-3">
+          <svg
+            class="w-5 h-5 text-blue-600 mt-0.5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            ></path>
+          </svg>
+          <div class="text-sm text-blue-800">
+            <p class="font-semibold mb-1">How it works:</p>
+            <ul class="list-disc list-inside space-y-1">
+              <li>Upload your PDF or image files containing tables</li>
+              <li>AI automatically detects and extracts all tables</li>
+              <li>
+                Download results as Excel spreadsheets or PowerPoint
+                presentations
+              </li>
+              <li>Each table is saved in a separate sheet/slide</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let selectedFiles = [];
+      const dropZone = document.getElementById("dropZone");
+      const fileInput = document.getElementById("fileInput");
+      const fileList = document.getElementById("fileList");
+      const filesContainer = document.getElementById("filesContainer");
+      const fileCount = document.getElementById("fileCount");
+      const processBtn = document.getElementById("processBtn");
+      const processingStatus = document.getElementById("processingStatus");
+      const results = document.getElementById("results");
+      const resultsContainer = document.getElementById("resultsContainer");
+
+      // Drag and drop handlers
+      ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
+        dropZone.addEventListener(eventName, preventDefaults, false);
+      });
+
+      function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+
+      ["dragenter", "dragover"].forEach((eventName) => {
+        dropZone.addEventListener(eventName, () => {
+          dropZone.classList.add("drag-active");
+        });
+      });
+
+      ["dragleave", "drop"].forEach((eventName) => {
+        dropZone.addEventListener(eventName, () => {
+          dropZone.classList.remove("drag-active");
+        });
+      });
+
+      dropZone.addEventListener("drop", handleDrop);
+      fileInput.addEventListener("change", handleFileSelect);
+
+      function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        handleFiles(files);
+      }
+
+      function handleFileSelect(e) {
+        const files = e.target.files;
+        handleFiles(files);
+      }
+
+      function handleFiles(files) {
+        const validTypes = [
+          "application/pdf",
+          "image/jpeg",
+          "image/jpg",
+          "image/png",
+        ];
+        Array.from(files).forEach((file) => {
+          if (validTypes.includes(file.type)) {
+            selectedFiles.push(file);
+          }
+        });
+        updateFileList();
+      }
+
+      function updateFileList() {
+        if (selectedFiles.length === 0) {
+          fileList.classList.add("hidden");
+          return;
+        }
+
+        fileList.classList.remove("hidden");
+        fileCount.textContent = selectedFiles.length;
+        filesContainer.innerHTML = "";
+
+        selectedFiles.forEach((file, index) => {
+          const fileDiv = document.createElement("div");
+          fileDiv.className =
+            "flex items-center justify-between bg-gray-50 p-3 rounded-lg";
+          fileDiv.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                        </svg>
+                        <div>
+                            <p class="font-medium text-gray-800">${
+                              file.name
+                            }</p>
+                            <p class="text-sm text-gray-500">${formatFileSize(
+                              file.size
+                            )}</p>
+                        </div>
+                    </div>
+                    <button onclick="removeFile(${index})" class="text-red-500 hover:text-red-700">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                `;
+          filesContainer.appendChild(fileDiv);
+        });
+      }
+
+      function removeFile(index) {
+        selectedFiles.splice(index, 1);
+        updateFileList();
+      }
+
+      function formatFileSize(bytes) {
+        if (bytes === 0) return "0 Bytes";
+        const k = 1024;
+        const sizes = ["Bytes", "KB", "MB"];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return (
+          Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i]
+        );
+      }
+
+      async function processFiles() {
+        if (selectedFiles.length === 0) return;
+
+        processBtn.disabled = true;
+        processingStatus.classList.remove("hidden");
+        results.classList.add("hidden");
+        resultsContainer.innerHTML = "";
+
+        const formData = new FormData();
+        selectedFiles.forEach((file) => {
+          formData.append("files[]", file);
+        });
+
+        try {
+          const response = await fetch("/upload", {
+            method: "POST",
+            body: formData,
+          });
+
+          // Check if response is ok
+          if (!response.ok) {
+            throw new Error(
+              `Server error: ${response.status} ${response.statusText}`
+            );
+          }
+
+          // Get response text first to debug
+          const responseText = await response.text();
+          console.log("Server response:", responseText);
+
+          // Try to parse as JSON
+          let data;
+          try {
+            data = JSON.parse(responseText);
+          } catch (jsonError) {
+            console.error("JSON parse error:", jsonError);
+            console.error("Response was:", responseText);
+            throw new Error(
+              "Invalid JSON response from server. Check console for details."
+            );
+          }
+
+          displayResults(data.results);
+        } catch (error) {
+          console.error("Processing error:", error);
+          alert(
+            "Error processing files: " +
+              error.message +
+              "\n\nCheck browser console (F12) for details."
+          );
+        } finally {
+          processBtn.disabled = false;
+          processingStatus.classList.add("hidden");
+        }
+      }
+
+      function displayResults(resultsData) {
+        results.classList.remove("hidden");
+        resultsContainer.innerHTML = "";
+
+        resultsData.forEach((result) => {
+          const resultDiv = document.createElement("div");
+          resultDiv.className = "border border-gray-200 rounded-lg p-4";
+
+          if (result.status === "success") {
+            resultDiv.innerHTML = `
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex items-start space-x-3">
+                                <svg class="w-6 h-6 text-green-500 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <div>
+                                    <h3 class="font-semibold text-gray-800">${
+                                      result.filename
+                                    }</h3>
+                                    <p class="text-sm text-gray-600">Found ${
+                                      result.tables_found
+                                    } table${
+              result.tables_found !== 1 ? "s" : ""
+            }</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex space-x-3">
+                            <a href="/download/excel/${
+                              result.excel_file
+                            }" class="flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                                </svg>
+                                <span>Download Excel</span>
+                            </a>
+                            <a href="/download/pptx/${
+                              result.pptx_file
+                            }" class="flex items-center space-x-2 bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition-colors">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                                </svg>
+                                <span>Download PowerPoint</span>
+                            </a>
+                        </div>
+                    `;
+          } else if (result.status === "no_tables") {
+            resultDiv.innerHTML = `
+                        <div class="flex items-start space-x-3">
+                            <svg class="w-6 h-6 text-yellow-500 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                            </svg>
+                            <div>
+                                <h3 class="font-semibold text-gray-800">${result.filename}</h3>
+                                <p class="text-sm text-gray-600">No tables found in this file</p>
+                            </div>
+                        </div>
+                    `;
+          } else {
+            resultDiv.innerHTML = `
+                        <div class="flex items-start space-x-3">
+                            <svg class="w-6 h-6 text-red-500 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <div>
+                                <h3 class="font-semibold text-gray-800">${
+                                  result.filename
+                                }</h3>
+                                <p class="text-sm text-red-600">${
+                                  result.error || "Failed to process"
+                                }</p>
+                            </div>
+                        </div>
+                    `;
+          }
+
+          resultsContainer.appendChild(resultDiv);
+        });
+
+        // Clear file selection after successful processing
+        selectedFiles = [];
+        updateFileList();
+        fileInput.value = "";
+      }
+    </script>
+  </body>
+</html>
