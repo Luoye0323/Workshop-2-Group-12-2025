@@ -27,6 +27,7 @@ interface FileItem {
   error?: string;
   excelFile?: string;
   pptxFile?: string;
+  pptxGoogleLink?: string;
   equipmentData?: any;
   duration?: number;
 }
@@ -194,6 +195,7 @@ export default function NewExtractionPage() {
                   extractionId: result.extraction_id,
                   excelFile: result.excel_file,
                   pptxFile: result.pptx_file,
+                  pptxGoogleLink: result.pptx_google_link,
                   equipmentData: result.equipment_data,
                 }
               : f
@@ -513,7 +515,9 @@ export default function NewExtractionPage() {
               {selectedItem ? (
                 <div className="space-y-4">
                   <div className="border rounded-lg p-4">
-                    <p className="text-md underline dark:text-white font-semibold mb-2">File details</p>
+                    <p className="text-md underline dark:text-white font-semibold mb-2">
+                      File details
+                    </p>
                     <div className="space-y-2 text-sm">
                       <p>
                         <strong>Name:</strong>
@@ -585,7 +589,7 @@ export default function NewExtractionPage() {
                             }}
                           >
                             <Download size={16} className="mr-2" />
-                            Download Excel
+                            Download .xlsx
                           </Button>
 
                           <Button
@@ -606,7 +610,52 @@ export default function NewExtractionPage() {
                             }}
                           >
                             <Download size={16} className="mr-2" />
-                            Download PowerPoint
+                            Download .pptx
+                          </Button>
+
+                          <Button
+                            variant="default"
+                            className="w-full bg-orange-600 hover:bg-orange-700 text-white"
+                            onClick={() => {
+                              window.open(
+                                selectedItem.pptxGoogleLink,
+                                "_blank"
+                              );
+                            }}
+                          >
+                            <FileText size={16} className="mr-2" />
+                            Open in Google Slides
+                          </Button>
+
+                          <Button
+                            variant="link"
+                            className="w-full text-blue-600 underline cursor-pointer"
+                            onClick={async () => {
+                              if (selectedItem.excelFile) {
+                                try {
+                                  await downloadFile(
+                                    "excel",
+                                    selectedItem.excelFile
+                                  );
+                                  // 2. Open Google Sheets in new tab
+                                  window.open(
+                                    "https://docs.google.com/spreadsheets/u/0/",
+                                    "_blank"
+                                  );
+                                  // 3. Inform user
+                                  alert(
+                                    "Opening Google Sheets. Please upload the downloaded 'MasterFile' to view it."
+                                  );
+                                } catch (error) {
+                                  console.error(
+                                    "Failed to open master file flow:",
+                                    error
+                                  );
+                                }
+                              }
+                            }}
+                          >
+                            View Masterfile in Google Sheets
                           </Button>
                         </div>
                       </>

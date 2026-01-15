@@ -13,9 +13,16 @@ import {
   Upload,
   X,
   PlusCircle,
+  Trash2,
+  RefreshCw,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { listExtractions, downloadFile, type Extraction } from "@/lib/api";
+import {
+  listExtractions,
+  downloadFile,
+  generateSyncedPPTX,
+  type Extraction,
+} from "@/lib/api";
 import "../../globals.css";
 
 export default function ExtractionListPage() {
@@ -101,11 +108,77 @@ export default function ExtractionListPage() {
           ))}
         </div>
 
+        {/* --- Synced Generation Section --- */}
+        <div className="bg-white dark:bg-[#30302e] border dark:border-stone-700 rounded-lg p-6 mb-8 shadow-sm">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div>
+              <h2 className="text-xl font-semibold mb-1 dark:text-white">
+                Generate from Master File
+              </h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Create a PPTX for any equipment tag present in the Master File.
+              </p>
+              <a
+                href={`https://docs.google.com/spreadsheets/d/1RyzHPFmO9axcVc-one-K0Iy9IL4hXm1ucXzRicYlN5k/edit`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline text-sm flex items-center gap-1 mt-1"
+              >
+                <FileText size={14} /> Open Master File (Google Sheets)
+              </a>
+            </div>
+
+            <div className="flex w-full md:w-auto items-center gap-3">
+              <input
+                type="text"
+                placeholder="Enter Tag (e.g. V-001)"
+                className="px-4 py-2 border rounded-lg dark:bg-black dark:border-stone-600 dark:text-white"
+                id="tagInput"
+              />
+              <Button
+                onClick={async () => {
+                  const input = document.getElementById(
+                    "tagInput"
+                  ) as HTMLInputElement;
+                  const tag = input.value.trim();
+                  if (!tag) return alert("Please enter a tag");
+
+                  try {
+                    const btn = document.activeElement as HTMLButtonElement;
+                    const originalText = btn.innerText;
+                    btn.innerText = "Generating...";
+                    btn.disabled = true;
+
+                    const res = await generateSyncedPPTX(tag);
+                    if (res.success && res.pptx_file) {
+                      await downloadFile("pptx", res.pptx_file);
+                      alert(`PPTX for ${tag} downloaded!`);
+                    }
+
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                  } catch (e: any) {
+                    alert("Error: " + e.message);
+                    const btn = document.activeElement as HTMLButtonElement;
+                    btn.innerText = "Generate";
+                    btn.disabled = false;
+                  }
+                }}
+              >
+                <Zap size={16} className="mr-2" />
+                Generate PPTX
+              </Button>
+            </div>
+          </div>
+        </div>
+
         {/* Loading State */}
         {loading && (
           <div className="text-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 dark:border-primary mx-auto"></div>
-            <p className="mt-4 text-gray-600 dark:text-gray-400">Loading extractions...</p>
+            <p className="mt-4 text-gray-600 dark:text-gray-400">
+              Loading extractions...
+            </p>
           </div>
         )}
 
@@ -212,14 +285,31 @@ export default function ExtractionListPage() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() =>
-                          handleDownload("pptx", extraction.pptx_file!)
-                        }
-                        title="Download PowerPoint"
+                        onClick={async () => {
+                          const tag = extraction.equipment_data?.equipment_tag;
+                          if (tag) {
+                            try {
+                              // Trigger regeneration from Master File
+                              const res = await generateSyncedPPTX(tag);
+                              if (res.success && res.pptx_file) {
+                                await downloadFile("pptx", res.pptx_file);
+                              } else {
+                                alert("Failed to generate synced PPTX.");
+                              }
+                            } catch (e) {
+                              console.error(e);
+                              alert("Error generating synced PPTX.");
+                            }
+                          } else {
+                            // Fallback to static file if no Tag
+                            handleDownload("pptx", extraction.pptx_file!);
+                          }
+                        }}
+                        title="Download PowerPoint (Synced from Master File)"
                         className=""
                       >
                         <Download size={16} />
-                        PowerPoint
+                        PPTX
                       </Button>
                     )}
                   </div>

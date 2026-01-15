@@ -118,9 +118,9 @@ def create_inspection_plan_template(output_file: str, data: dict = None):
     # -- Data Filling (Rows 2, 3, 4) --
     # Example components list to fill rows
     components = data.get('components', [
-        {'name': 'Top Head', 'code': 'ASME VIII', 'mat': 'SS'},
-        {'name': 'Shell', 'code': 'ASME VIII', 'mat': 'SS'},
-        {'name': 'Bottom Head', 'code': 'ASME VIII', 'mat': 'SS'}
+        {'name': 'Top Head', 'code': 'ASME VIII DIV 1', 'mat': 'SS'},
+        {'name': 'Shell', 'code': 'ASME VIII DIV 1', 'mat': 'SS'},
+        {'name': 'Bottom Head', 'code': 'ASME VIII DIV 1', 'mat': 'SS'}
     ])
 
     # Fill components (loop through max 3 rows for this template)

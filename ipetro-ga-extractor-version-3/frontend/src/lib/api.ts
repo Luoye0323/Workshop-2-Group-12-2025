@@ -45,6 +45,7 @@ export interface Extraction {
   equipment_data: any;
   excel_file?: string;
   pptx_file?: string;
+  pptx_google_link?: string;
   created_at: string;
 }
 
@@ -334,4 +335,21 @@ export async function downloadFile(
   a.click();
   a.remove();
   window.URL.revokeObjectURL(url);
+}
+
+export async function generateSyncedPPTX(
+  tag: string
+): Promise<{ success: boolean; pptx_file: string; message: string }> {
+  const response = await fetch(`${API_BASE_URL}/api/generate-pptx`, {
+    method: "POST",
+    headers: getHeaders(true),
+    body: JSON.stringify({ tag }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.detail || "Failed to generate PPTX");
+  }
+
+  return response.json();
 }

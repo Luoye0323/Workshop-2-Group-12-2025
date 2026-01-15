@@ -1,0 +1,16 @@
+if EQUIPMENT NO. -> V-001, PMT NO. -> MLK PMT 10101, EQUIPMENT DESCRIPTION -> Air Reciever, PARTS -> Top Head, Shell, Bottom Head, PHASE -> Gas (respectively), TYPE -> Carbon Steel
+if EQUIPMENT NO. -> V-002, PMT NO. -> MLK PMT 10102, EQUIPMENT DESCRIPTION -> Expansion Tank, PARTS -> Top Head, Shell, Bottom Head, PHASE -> Liquid (respectively), TYPE -> Stainless Steel
+if EQUIPMENT NO. -> V-003, PMT NO. -> MLK PMT 10103, EQUIPMENT DESCRIPTION -> Condensate Vessel, PARTS -> Top Head, Shell, Bottom Head, PHASE -> Gas (respectively), TYPE -> Carbon Steel
+if EQUIPMENT NO. -> V-004, PMT NO. -> MLK PMT 10104, EQUIPMENT DESCRIPTION -> Hot Water System, PARTS -> Head, Shell, PHASE -> Liquid (ALL), TYPE -> Stainless Steel
+if EQUIPMENT NO. -> V-005, PMT NO. -> MLK PMT 10105, EQUIPMENT DESCRIPTION -> Absorber for Neutralization of Acid Gases, PARTS -> Top Head, Shell, Bottom Head, PHASE -> Liquid, Liquid, Gas (respectively), TYPE -> Stainless Steel
+if EQUIPMENT NO. -> V-006, PMT NO. -> MLK PMT 10106, EQUIPMENT DESCRIPTION -> Thermal Deaerator, PARTS -> Head, Shell, PHASE -> Gas (ALL), TYPE -> Carbon Steel
+if EQUIPMENT NO. -> H-001, PMT NO. -> MLK PMT 10107, EQUIPMENT DESCRIPTION -> Cooling of Steam-Gas Mix at The Exit of the Reactor, PARTS -> Channel, Shell, Tube Bundle, PHASE -> Gas (ALL), TYPE -> Stainless Steel
+if EQUIPMENT NO. -> H-002, PMT NO. -> MLK PMT 10108, EQUIPMENT DESCRIPTION -> Gas Scrubber Cooler, PARTS -> Channel, Shell, Tube Bundle, PHASE -> Liquid(ALL), TYPE -> Stainless Steel
+if EQUIPMENT NO. -> H-003, PMT NO. -> MLK PMT 10109, EQUIPMENT DESCRIPTION -> Cooling of Water on Irrigation of An Absorber, PARTS -> Channel, Shell, Tube Bundle, PHASE -> Liquid (ALL), TYPE -> Stainless Steel
+if EQUIPMENT NO. -> H-004, PMT NO. -> MLK PMT 10110, EQUIPMENT DESCRIPTION -> Reflux Condensor of Drying Tower, PARTS -> Channel, Shell, Tube Bundle, PHASE -> Liquid (ALL), TYPE -> Stainless Steel
+
+So if the user want to add new equipment, the user can add through a specific adding equipment page or directly on the masterfile (through Google Spreadsheet) and it will be automatically added to the database.
+
+For the pptx, the system should read through the masterfile and do the find and replace mechanism based on the tag given in the pptx. The tag should be in the format of {{TAG_NAME}}. The system should also be able to handle the case where the tag is not found in the masterfile.
+
+
