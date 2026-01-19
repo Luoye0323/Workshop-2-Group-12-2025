@@ -1,0 +1,7 @@
+{
+  "/page": "app/page.js",
+  "/main/dashboard/page": "app/main/dashboard/page.js",
+  "/main/tasks/new/page": "app/main/tasks/new/page.js",
+  "/main/tasks/page": "app/main/tasks/page.js",
+  "/main/tasks/[taskId]/page": "app/main/tasks/[taskId]/page.js"
+}

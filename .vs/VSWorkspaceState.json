@@ -1,0 +1,12 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\backend",
+    "\\backend\\routes",
+    "\\backend\\services",
+    "\\frontend",
+    "\\frontend\\lib"
+  ],
+  "SelectedNode": "\\backend\\routes\\users.py",
+  "PreviewInSolutionExplorer": false
+}
